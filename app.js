@@ -1,4 +1,4 @@
-/* Client presentation. Geometry is in metres and comes from the V5 review model. */
+/* Client presentation. V7 geometry is in metres and includes the private master suite. */
 (() => {
   'use strict';
   const $ = s => document.querySelector(s);
@@ -38,7 +38,7 @@
   let api = null, loadPromise;
   const loadModel = () => loadPromise || (loadPromise = fetch('assets/house-model.json')
     .then(r => { if (!r.ok) throw new Error('模型文件暂时不可用'); return r.json(); })
-    .then(data => { if (!window.THREE) throw new Error('三维引擎未能加载'); api = createModel(data); return api; })
+    .then(async data => { if (!window.THREE || !window.GLTFLoader) throw new Error('三维引擎未能加载'); const detail=await new window.GLTFLoader().loadAsync('assets/house-v7.glb'); api = createModel(data,detail.scene); return api; })
     .catch(e => {
       const el = $('#model-loading'); el.replaceChildren();
       const msg = document.createElement('div'); msg.className = 'error-fallback';
@@ -53,12 +53,13 @@
     if (entries.some(x => x.isIntersecting)) { loadModel(); observer.disconnect(); }
   }, {rootMargin:'450px'});
   observer.observe(stage);
+  window.openRoom3D = async id => { $('#model').scrollIntoView({behavior:motionReduced?'auto':'smooth'}); const model=await loadModel();model?.setRoom(id); };
   $$('[data-jump]').forEach(b => b.onclick = async () => {
     $('#model').scrollIntoView({behavior:motionReduced ? 'auto' : 'smooth'});
     const model = await loadModel(); model?.setMode(b.dataset.jump);
   });
 
-  function createModel(HOUSE) {
+  function createModel(HOUSE, detailModel) {
     for (const b of HOUSE.boxes) {
       if (b.p[0] < -1e-6 || b.p[1] < -1e-6 || b.p[0]+b.size[0] > 12.000001 || b.p[1]+b.size[1] > 11.000001) {
         throw new Error('模型外包超出12×11米控制范围');
@@ -69,6 +70,7 @@
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = T.PCFSoftShadowMap;
+    renderer.localClippingEnabled = true;
     renderer.outputColorSpace = T.SRGBColorSpace;
     renderer.toneMapping = T.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.03;
@@ -86,6 +88,7 @@
     sun.shadow.camera.top=23; sun.shadow.camera.bottom=-23; sun.shadow.camera.near=1; sun.shadow.camera.far=80;
     sun.shadow.normalBias=.025; sun.shadow.bias=-.00015; scene.add(sun);
     const fill = new T.DirectionalLight('#d9e5e9', .65); fill.position.set(16,12,-15); scene.add(fill);
+    const indoorAmbient = new T.AmbientLight('#fff8ed',1.4); indoorAmbient.visible=false;scene.add(indoorAmbient);
     // Neutral shadow plane is presentation background, not a site walkway or additional land.
     const ground = new T.Mesh(new T.PlaneGeometry(120,120),new T.ShadowMaterial({opacity:.17}));
     ground.rotation.x=-Math.PI/2; ground.position.y=-.215; ground.receiveShadow=true; scene.add(ground);
@@ -111,11 +114,11 @@
       if(k==='light'){opt.emissive='#d9a75b';opt.emissiveIntensity=.3;}
       mats[k]=new T.MeshStandardMaterial(opt);
     }
-    let mode='all',view='perspective',dark=false,dimensions=true,autoRotate=false;
+    let mode='all',view='perspective',dark=false,dimensions=true,autoRotate=false,inside=null;
     let az=.60,el=.50,dist=31,target=new T.Vector3(0,4.3,0),aim={az:.60,el:.50,dist:31,target:new T.Vector3(0,4.3,0)};
     let labels=[],dirty=true,inView=true,previousTime=0;
     const selectedViews={perspective:[.60,.50,31,'前侧鸟瞰'],front:[0,.095,29,'正面'],left:[-Math.PI/2,.13,29,'左侧'],rear:[Math.PI,.13,29,'背面'],right:[Math.PI/2,.13,29,'右侧'],top:[0,Math.PI/2-.001,30,'俯视']};
-    const modes={all:['两层主体 · 四卧 · 屋顶露台',4.25],floor1:['长者／客卧 · 团聚厅 · 厨餐',.55],floor2:['三间卧室 · 阅读 · 家庭起居',4.05],roof:['喝茶观景 · 开敞活动 · 少量洗晒',7.35]};
+    const modes={all:['两层主体 · 四卧三卫 · 主卧套房',4.25],floor1:['长者／客卧 · 团聚厅 · 厨餐 · 公卫洗衣',.55],floor2:['主卧套房 · 两间客卧 · 公卫 · 家庭起居',4.05],roof:['喝茶观景 · 开敞活动 · 少量洗晒',7.35]};
     const lineMaterial = new T.LineBasicMaterial({color:'#78966b',transparent:true,opacity:.85,depthTest:false});
     function line(points) {const g=new T.BufferGeometry().setFromPoints(points.map(p=>new T.Vector3(...p)));const l=new T.Line(g,lineMaterial);l.renderOrder=8;dimGroup.add(l);}
     function addLabel(text,x,y,z,kind='') {const el=document.createElement('span');el.className='hotspot '+kind;el.textContent=text;$('#hotspots').append(el);labels.push({el,p:new T.Vector3(x,y,z),kind});}
@@ -143,14 +146,22 @@
         if(h<=0)continue;
         (bins[b.mat] ||= []).push({x:x+w/2-6,y:z+h/2,z:y+d/2-5.5,w,h,d});
       }
-      for(const[k,parts]of Object.entries(bins)){
+      if(detailModel){
+        modelGroup.add(detailModel);
+        const planes=mode==='floor1'?[new T.Plane(new T.Vector3(0,-1,0),1.45)]:mode==='floor2'?[new T.Plane(new T.Vector3(0,-1,0),5.05)]:[];
+        detailModel.traverse(o=>{if(!o.isMesh)return;const g=o.userData.group,zmin=o.userData.zmin||0,zmax=o.userData.zmax||0;
+          o.visible=mode==='all'||(mode==='floor1'&&['floor1','facade'].includes(g)&&zmin<1.45)||(mode==='floor2'&&['floor2','facade'].includes(g)&&zmax>3.4&&zmin<5.05)||(mode==='roof'&&['roof','roofhouse','pergola'].includes(g));
+          o.castShadow=true;o.receiveShadow=true;
+          for(const m of(Array.isArray(o.material)?o.material:[o.material])){m.clippingPlanes=planes;m.clipShadows=true;m.needsUpdate=true;}
+        });
+      } else for(const[k,parts]of Object.entries(bins)){
         const inst=new T.InstancedMesh(cube,mats[k],parts.length);
         parts.forEach((p,i)=>{dummy.position.set(p.x,p.y,p.z);dummy.scale.set(p.w,p.h,p.d);dummy.rotation.set(0,0,0);dummy.updateMatrix();matrix.copy(dummy.matrix);inst.setMatrixAt(i,matrix);});
         inst.castShadow=k!=='glass';inst.receiveShadow=true;inst.instanceMatrix.needsUpdate=true;inst.computeBoundingSphere();modelGroup.add(inst);
       }
       if(mode==='floor1'||mode==='floor2'){
         const level=mode==='floor1'?1:2;
-        const allow=level===1?['厨房','餐厅','楼梯','卫浴','茶叙过厅','长者/客卧','团聚厅/玄关']:['书房','主卧','楼梯','卫浴','客卧A','客卧B','家庭起居'];
+        const allow=level===1?['厨房','餐厅','楼梯','卫浴','茶叙过厅','长者/客卧','团聚厅/玄关']:['套房书桌区','主卧套房','衣帽间','主卧专卫','二层公卫','客卧A','客卧B','家庭起居'];
         for(const[name,x,y,w,d]of HOUSE.rooms[String(level)])if(allow.includes(name))addLabel(name,x+w/2-6,level===1?1.35:4.95,y+d/2-5.5);
       }
       if(mode==='roof'){
@@ -162,13 +173,15 @@
       updateLabels();dirty=true;
     }
     function updateUI(){
+      indoorAmbient.visible=!!inside;
       $$('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
       $$('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===view)));
-      $('#model-view-name').textContent=({all:'整栋',floor1:'一层',floor2:'二层',roof:'屋顶'}[mode])+' · '+selectedViews[view][3];
-      $('#mode-description').textContent=modes[mode][0];
+      $('#model-view-name').textContent=inside?'室内 · '+inside.name:({all:'整栋',floor1:'一层',floor2:'二层',roof:'屋顶'}[mode])+' · '+selectedViews[view][3];
+      $('#mode-description').textContent=inside?'Blender 家具与材质 · 拖动环视':modes[mode][0];
       status.textContent=$('#model-view-name').textContent;
     }
     function preset(instant=false){
+      camera.fov=inside?70:36;camera.updateProjectionMatrix();
       const v=selectedViews[view];aim.az=v[0];aim.el=v[1];aim.dist=v[2];aim.target.set(0,modes[mode][1],0);
       if(mode!=='all'&&view==='perspective'){aim.el=1.06;aim.az=.18;aim.dist=25;}
       if(mode!=='all'&&view==='top')aim.dist=25;
@@ -177,11 +190,14 @@
       if(instant||motionReduced){az=aim.az;el=aim.el;dist=aim.dist;target.copy(aim.target);}
       dirty=true;updateUI();
     }
-    function setMode(key){mode=key;view='perspective';autoRotate=false;$('#rotate-toggle').setAttribute('aria-pressed','false');rebuild();preset();}
-    function setView(key){view=key;autoRotate=false;$('#rotate-toggle').setAttribute('aria-pressed','false');preset();}
+    function setMode(key){inside=null;$('#room-camera').value='';mode=key;view='perspective';autoRotate=false;$('#rotate-toggle').setAttribute('aria-pressed','false');rebuild();preset();}
+    function setView(key){inside=null;$('#room-camera').value='';dimGroup.visible=dimensions;view=key;autoRotate=false;$('#rotate-toggle').setAttribute('aria-pressed','false');preset();}
+    function setRoom(id){const r=window.GUIYUAN_ROOMS.find(r=>r.id===id&&r.camera);if(!r)return;setMode('all');inside=r;$('#room-camera').value=id;const a=r.camera[0],b=r.camera[1],p=new T.Vector3(a[0]-6,a[2],a[1]-5.5),t=new T.Vector3(b[0]-6,b[2],b[1]-5.5),d=p.clone().sub(t);aim.target.copy(t);aim.dist=d.length();aim.az=Math.atan2(d.x,d.z);aim.el=Math.asin(d.y/aim.dist);az=aim.az;el=aim.el;dist=aim.dist;target.copy(t);camera.fov=70;camera.updateProjectionMatrix();dimGroup.visible=false;labels.forEach(l=>l.el.hidden=true);dirty=true;updateUI();render();}
+    $('#room-camera').onchange=e=>{if(e.target.value)setRoom(e.target.value);};$('#exit-room').onclick=()=>setMode('all');
     function updateLabels(){
       const w=stage.clientWidth,h=stage.clientHeight;
       for(const l of labels){
+        if(inside){l.el.hidden=true;continue;}
         if(l.kind==='dimension'&&!dimensions){l.el.hidden=true;continue;}
         const p=l.p.clone().project(camera);
         l.el.hidden=p.z>1||p.z< -1||Math.abs(p.x)>1.15||Math.abs(p.y)>1.15;
@@ -189,7 +205,7 @@
       }
     }
     function render(){
-      const multiplier=Math.max(1,1.14/camera.aspect);
+      const multiplier=inside?1:Math.max(1,1.14/camera.aspect);
       camera.position.set(target.x+dist*multiplier*Math.sin(az)*Math.cos(el),target.y+dist*multiplier*Math.sin(el),target.z+dist*multiplier*Math.cos(az)*Math.cos(el));
       camera.lookAt(target);camera.updateMatrixWorld();renderer.render(scene,camera);updateLabels();dirty=false;
     }
@@ -207,24 +223,25 @@
     }
     $$('[data-mode]').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
     $$('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
-    $('#dimension-toggle').onclick=()=>{dimensions=!dimensions;dimGroup.visible=dimensions;$('#dimension-toggle').setAttribute('aria-pressed',String(dimensions));$('.scale-key').hidden=!dimensions;dirty=true;};
+    $('#dimension-toggle').onclick=()=>{dimensions=!dimensions;dimGroup.visible=dimensions&&!inside;$('#dimension-toggle').setAttribute('aria-pressed',String(dimensions));$('.scale-key').hidden=!dimensions;dirty=true;};
     $('#light-toggle').onclick=()=>{
       dark=!dark;$('#light-toggle').setAttribute('aria-pressed',String(dark));$('#light-toggle').textContent=dark?'切换日光':'切换暮色';
       ambient.intensity=dark?.90:1;ambient.color.set(dark?'#bed0e0':'#fff9ed');sun.intensity=dark?.78:2;sun.color.set(dark?'#c4cde0':'#fff0d5');fill.intensity=dark?.45:.65;renderer.toneMappingExposure=dark?1.15:1.03;
       mats.glass.emissive.set(dark?'#edb364':'#000000');mats.glass.emissiveIntensity=dark?.42:0;mats.light.emissiveIntensity=dark?1.2:.3;
+      detailModel.traverse(o=>{if(!o.isMesh)return;for(const m of(Array.isArray(o.material)?o.material:[o.material])){if(m.name==='light')m.emissiveIntensity=dark?3:1;if(m.name==='glass'){m.emissive.set(dark?'#edb364':'#000000');m.emissiveIntensity=dark?.22:0;}}});
       stage.style.background=dark?'radial-gradient(ellipse at 50% 25%,#b8c3c9,#8c9ba5)':'';dirty=true;
     };
     $('#rotate-toggle').onclick=()=>{autoRotate=!autoRotate;$('#rotate-toggle').setAttribute('aria-pressed',String(autoRotate));dirty=true;};
     const stopRotate=()=>{autoRotate=false;$('#rotate-toggle').setAttribute('aria-pressed','false');};
-    const zoom=factor=>{aim.dist=Math.max(16,Math.min(65,aim.dist*factor));dirty=true;};
+    const zoom=factor=>{aim.dist=Math.max(inside?.6:16,Math.min(inside?9:65,aim.dist*factor));dirty=true;};
     $('#zoom-in').onclick=()=>zoom(.86);$('#zoom-out').onclick=()=>zoom(1.16);
-    $('#reset-view').onclick=()=>{stopRotate();preset();};
+    $('#reset-view').onclick=()=>{stopRotate();if(inside)setRoom(inside.id);else preset();};
     const points=new Map();let pinch=0;
     renderer.domElement.addEventListener('pointerdown',e=>{stopRotate();points.set(e.pointerId,[e.clientX,e.clientY]);renderer.domElement.setPointerCapture(e.pointerId);});
     renderer.domElement.addEventListener('pointermove',e=>{
       if(!points.has(e.pointerId))return;
       const prev=points.get(e.pointerId);points.set(e.pointerId,[e.clientX,e.clientY]);
-      if(points.size===1){aim.az-=(e.clientX-prev[0])*.006;aim.el=Math.max(.035,Math.min(1.569,aim.el+(e.clientY-prev[1])*.005));}
+      if(points.size===1){aim.az-=(e.clientX-prev[0])*.006;aim.el=Math.max(inside?-.8:.035,Math.min(1.569,aim.el+(e.clientY-prev[1])*.005));}
       else{const p=[...points.values()],length=Math.hypot(p[0][0]-p[1][0],p[0][1]-p[1][1]);if(pinch&&length>0)zoom(pinch/length);pinch=length;}
       dirty=true;
     });
@@ -236,7 +253,7 @@
       e.preventDefault();stopRotate();
       if(e.key==='ArrowLeft')aim.az-=.13;if(e.key==='ArrowRight')aim.az+=.13;
       if(e.key==='ArrowUp')aim.el=Math.min(1.569,aim.el+.09);if(e.key==='ArrowDown')aim.el=Math.max(.035,aim.el-.09);
-      if(e.key==='+'||e.key==='=')zoom(.9);if(e.key==='-')zoom(1.1);if(e.key==='0')preset();dirty=true;
+      if(e.key==='+'||e.key==='=')zoom(.9);if(e.key==='-')zoom(1.1);if(e.key==='0'){if(inside)setRoom(inside.id);else preset();}dirty=true;
     });
     const fullscreenButton=$('#fullscreen');
     const syncFullscreen=()=>{const active=document.fullscreenElement===panel||panel.classList.contains('fullscreen-fallback');fullscreenButton.setAttribute('aria-label',active?'退出全屏':'全屏查看模型');fullscreenButton.title=active?'退出全屏':'全屏';};
@@ -264,6 +281,6 @@
     rebuild();preset(true);resize();requestAnimationFrame(tick);
     $('#model-loading').classList.add('hidden');
     panel.dataset.loaded='true';panel.dataset.footprint='12x11';
-    return {setMode,setView};
+    return {setMode,setView,setRoom};
   }
 })();
