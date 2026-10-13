@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f5f3ee">
+  <meta name="description" content="归院 · 12×11米现代中式乡居。简约外观、四卧布局、可使用的屋顶露台与可交互三维模型。">
+  <meta property="og:title" content="归院 · 田野边的家">
+  <meta property="og:description" content="简约有度，归家有院。两层四卧与屋顶茶叙空间。">
+  <meta property="og:image" content="https://lgch3136.github.io/courtyard-house/assets/hero-day.png">
+  <title>归院 · 田野边的家</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preload" as="image" href="assets/hero-day.png">
+  <script defer src="vendor/three.min.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">跳至正文</a>
+<header class="site-header">
+  <a class="brand" href="#top" aria-label="归院，返回顶部"><span class="brand-mark">归</span><span>归院<small>A HOME BY THE FIELDS</small></span></a>
+  <nav aria-label="主导航"><a href="#vision">设计意向</a><a href="#model">三维看房</a><a href="#living">空间安排</a></nav>
+  <a class="header-cta" href="#model">进入 3D <span aria-hidden="true">↗</span></a>
+</header>
+<main id="main">
+<section class="hero section-shell" id="top">
+  <div class="hero-copy"><p class="eyebrow"><span></span> MODERN CHINESE COUNTRY HOUSE</p><h1>简约有度。<br>归家有院。</h1><p class="hero-intro">把屋顶留给风景，<br>把家留给相聚。</p><p class="hero-description">一栋适合节日团聚、闲时短住的乡居。<br>干净的体量，温和的材质，刚刚好的生活。</p><a class="solid-link" href="#model">从三维模型开始 <span aria-hidden="true">↗</span></a><div class="hero-index"><span>JIANGSU · COUNTRYSIDE</span><span>01 / 03</span></div></div>
+  <figure class="hero-figure"><button class="image-open" data-image="hero-day" aria-label="放大查看日景效果图"><img id="hero-image" src="assets/hero-day.png" width="1462" height="1076" alt="米白色两层现代中式住宅，屋顶设茶棚，前院与主体等宽，两侧不设置环绕通道" fetchpriority="high"></button><div class="hero-photo-tools"><div class="segmented" role="group" aria-label="效果图光线"><button data-hero="day" aria-pressed="true">日景</button><button data-hero="dusk" aria-pressed="false">暮色</button></div><span class="photo-hint">点击图片 · 查看大图 ↗</span></div><figcaption>材质与光影意向 · 前后院深度、邻房形态仅作场景示意</figcaption></figure>
+</section>
+<section class="project-facts section-shell" aria-label="项目参数"><div><span class="fact-value">12 <i>×</i> 11 <small>m</small></span><p>主体建设控制范围</p></div><div><span class="fact-value">2 <small>层＋屋顶露台</small></span><p>平屋顶，空间向上延伸</p></div><div><span class="fact-value">4 <small>间卧室</small></span><p>一层一卧 · 二层三卧</p></div><div class="fact-note"><span class="tiny-heading">边界先于造型</span><p>前后院在主体范围之外。<br>两侧不预设外廊或环形通道。</p></div></section>
+
+<section class="vision section-shell" id="vision">
+  <div class="section-heading"><div><p class="eyebrow">01 / DESIGN LANGUAGE</p><h2>让材质安静，<br>让空间说话。</h2></div><p class="section-summary">以米白、浅灰和少量木色为主。<br>用比例与留白，表达现代中式的从容。</p></div>
+  <div class="vision-grid"><figure class="roof-image"><button class="image-open" data-image="roof-tea" aria-label="放大查看屋顶茶叙效果图"><img src="assets/roof-tea.png" width="1462" height="1076" alt="平屋顶上的木格栅茶棚、开敞活动区和少量洗晒空间" loading="lazy"></button><figcaption><span>屋顶，也是生活的一层。</span><span>ROOFTOP LIFE ↗</span></figcaption></figure><div class="material-story"><span class="tiny-heading">A QUIET PALETTE</span><h3>少一点装饰。<br>多一点舒适。</h3><p>外墙以细腻米白涂料为主，入口少量浅灰石材。门窗与栏杆统一深灰色，木色留给入户门和屋顶茶棚。</p><div class="swatches" aria-label="材料色板"><div><span class="swatch plaster"></span><b>米白</b><small>细腻墙面</small></div><div><span class="swatch stone"></span><b>浅灰</b><small>局部石材</small></div><div><span class="swatch metal"></span><b>深灰</b><small>金属细框</small></div><div><span class="swatch wood"></span><b>木色</b><small>少量点缀</small></div></div><p class="quiet-rule">室内延续同一色系：平整吊顶、浅色地面、简洁柜体和易打理的家具。</p></div></div>
+</section>
+
+<section class="model-section" id="model">
+  <div class="section-shell"><div class="section-heading"><div><p class="eyebrow">02 / INTERACTIVE MODEL</p><h2>每一个角度，<br>都看得清楚。</h2></div><p class="section-summary">拖动旋转，滚轮或双指缩放。<br>切换楼层，查看四卧布局与屋顶分区。</p></div>
+  <div class="model-panel" id="model-panel"><div class="model-toolbar"><div class="model-tabs" role="group" aria-label="选择楼层"><button data-mode="all" aria-pressed="true">整栋</button><button data-mode="floor1" aria-pressed="false">一层</button><button data-mode="floor2" aria-pressed="false">二层</button><button data-mode="roof" aria-pressed="false">屋顶</button></div><div class="model-options"><button id="dimension-toggle" aria-pressed="true" title="显示或隐藏主体12×11米边界">尺寸边界</button><button id="light-toggle" aria-pressed="false">切换暮色</button></div></div>
+  <div id="stage" role="region" aria-label="可交互住宅三维模型"><div id="model-loading" role="status"><span class="loader"></span><p>正在打开这座家…</p></div><div id="hotspots" aria-hidden="true"></div><div class="model-caption"><span class="live-dot"></span><span id="model-view-name">前侧鸟瞰</span><small id="mode-description">两层主体 · 四卧 · 屋顶露台</small></div><div class="stage-actions"><button id="zoom-in" aria-label="放大模型" title="放大">＋</button><button id="zoom-out" aria-label="缩小模型" title="缩小">−</button><button id="reset-view" aria-label="复位当前视角" title="复位">⟲</button><button id="fullscreen" aria-label="全屏查看模型" title="全屏">⛶</button></div><div class="scale-key"><i></i> 12 × 11 m 主体边界</div></div>
+  <div class="model-bottom"><div class="view-presets" role="group" aria-label="模型视角"><button data-view="perspective" aria-pressed="true">鸟瞰</button><button data-view="front" aria-pressed="false">正面</button><button data-view="left" aria-pressed="false">左侧</button><button data-view="rear" aria-pressed="false">背面</button><button data-view="right" aria-pressed="false">右侧</button><button data-view="top" aria-pressed="false">俯视</button></div><div class="model-bottom-actions"><button id="rotate-toggle" aria-pressed="false">自动旋转</button><button id="save-view">保存视角 ↓</button></div></div>
+  <p id="model-status" class="sr-only" aria-live="polite"></p></div>
+  <div class="model-footnote"><p>尺寸模型沿用建筑会审数据；主体外包为 12×11 米。前后院只作位置关系示意，深度待实测。</p><p>效果图表达材质与氛围，尺寸以图纸及模型为准。</p></div>
+  </div>
+</section>
+
+<section class="living section-shell" id="living"><div class="section-heading"><div><p class="eyebrow">03 / A PLACE TO RETURN</p><h2>两层与屋顶，<br>各有从容。</h2></div><p class="section-summary">围绕偶尔回乡、家人相聚的实际需求。<br>房间够用，活动空间充裕，日常维护简单。</p></div><div class="living-list"><article><span class="floor-number">01<span>F</span></span><div><h3>相聚在一层</h3><p>团聚厅、餐厅、厨房与茶叙过厅相连。一间长者／客卧靠近卫浴，减少上下楼。</p></div><button data-jump="floor1">查看一层 <span>↗</span></button></article><article><span class="floor-number">02<span>F</span></span><div><h3>安静留给楼上</h3><p>三间卧室配家庭起居、阅读空间和前侧阳台。家务区集中布置，短住也方便收拾。</p></div><button data-jump="floor2">查看二层 <span>↗</span></button></article><article><span class="floor-number">RF</span><div><h3>屋顶留给风景</h3><p>前侧茶棚、中央开敞活动区、后侧少量洗晒。楼梯直达屋顶，空间保持通透。</p></div><button data-jump="roof">查看屋顶 <span>↗</span></button></article></div></section>
+
+<section class="dusk-section section-shell"><figure><button class="image-open" data-image="hero-dusk" aria-label="放大查看暮色效果图"><img src="assets/hero-dusk.png" width="1462" height="1076" alt="暮色中的简约乡居，窗内暖光和安静的前院" loading="lazy"></button><figcaption><span class="eyebrow">WHEN THE LIGHTS COME ON</span><h2>灯亮的时候，<br>家就回来了。</h2><p>温和的室内暖光，少量入口照明。<br>日常、耐看，也容易打理。</p></figcaption></figure></section>
+</main>
+<footer class="site-footer section-shell"><div class="footer-main"><a class="brand" href="#top"><span class="brand-mark">归</span><span>归院<small>A HOME BY THE FIELDS</small></span></a><a href="#top">回到顶部 ↑</a></div><div class="footer-notes"><p>现代中式乡居 · 客户方案展示 · 2026.10<br>主体两层，屋顶露台。前后院与周边环境为意向表达，未预设侧向通道。</p><p>ImageGen 材质效果图＋可交互建筑模型。<br>本页用于方案沟通；施工以完成专业设计并确认后的图纸为准。</p></div></footer>
+<dialog id="image-dialog" aria-labelledby="lightbox-title"><div class="lightbox-bar"><span id="lightbox-title">方案效果图</span><div><a id="download-image" href="assets/hero-day.png" download>下载原图 ↓</a><button id="close-dialog" aria-label="关闭大图">关闭 ×</button></div></div><img id="lightbox-image" alt="放大的方案效果图"><p>材质与光影意向；尺寸以建筑图纸及交互模型为准。</p></dialog>
+<noscript><p class="noscript">效果图可以直接浏览。三维交互需要浏览器启用 JavaScript。</p></noscript>
+</body></html>
