@@ -30,7 +30,7 @@
   }));
   $('#close-dialog').onclick = () => dialog.close();
   dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); });
-  dialog.addEventListener('close', () => { document.body.style.overflow = ''; lastImageButton?.focus({preventScroll:true}); });
+  dialog.addEventListener('close', () => { document.body.style.overflow = $('#model-panel').classList.contains('fullscreen-fallback')?'hidden':''; lastImageButton?.focus({preventScroll:true}); });
 
   const stage = $('#stage'), status = $('#model-status'), panel = $('#model-panel');
   const motionReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -252,7 +252,12 @@
       const ctx=out.getContext('2d');ctx.fillStyle=dark?'#9caab4':'#eff1e8';ctx.fillRect(0,0,out.width,out.height);ctx.drawImage(renderer.domElement,0,40);
       ctx.fillStyle='#34452f';ctx.font='16px sans-serif';ctx.fillText('归院 · '+$('#model-view-name').textContent+' · 12 × 11 m',24,28);
       ctx.font='12px sans-serif';ctx.fillText('建筑尺寸模型 · 材质与家具为方案表达',24,out.height-14);
-      const a=document.createElement('a');a.download='guiyuan-'+mode+'-'+view+'.png';a.href=out.toDataURL('image/png');a.click();status.textContent='已导出当前三维视角图片';
+      const data=out.toDataURL('image/png');
+      $('#lightbox-title').textContent='三维视角 · '+$('#model-view-name').textContent;
+      $('#lightbox-image').src=data;$('#lightbox-image').alt='当前住宅三维视角导出预览';
+      $('#download-image').href=data;$('#download-image').download='guiyuan-'+mode+'-'+view+'.png';
+      lastImageButton=$('#save-view');dialog.showModal();document.body.style.overflow='hidden';
+      status.textContent='已生成当前视角预览，可点击下载原图保存';
     };
     renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();status.textContent='三维显示中断，请刷新页面重新加载';});
     rebuild();preset(true);resize();requestAnimationFrame(tick);
