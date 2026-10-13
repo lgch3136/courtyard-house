@@ -4,9 +4,9 @@
   const $ = s => document.querySelector(s);
   const $$ = s => [...document.querySelectorAll(s)];
   const imageInfo = {
-    'hero-day': ['日景 · 简约乡居', 'assets/hero-day.png'],
-    'hero-dusk': ['暮色 · 归家的灯光', 'assets/hero-dusk.png'],
-    'roof-tea': ['屋顶 · 茶叙与开敞活动', 'assets/roof-tea.png']
+    'hero-day': ['日景 · 简约乡居', 'assets/hero-day.jpg'],
+    'hero-dusk': ['暮色 · 归家的灯光', 'assets/hero-dusk.jpg'],
+    'roof-tea': ['屋顶 · 茶叙与开敞活动', 'assets/roof-tea.jpg']
   };
   let currentHero = 'hero-day', lastImageButton;
   $$('[data-hero]').forEach(b => b.addEventListener('click', () => {
@@ -23,7 +23,8 @@
     $('#lightbox-title').textContent = info[0];
     $('#lightbox-image').src = info[1];
     $('#lightbox-image').alt = info[0];
-    $('#download-image').href = info[1];
+    $('#download-image').href = info[1].replace('.jpg','.png');
+    $('#download-image').download = b.dataset.image + '.png';
     lastImageButton = b;
     dialog.showModal();
     document.body.style.overflow = 'hidden';
