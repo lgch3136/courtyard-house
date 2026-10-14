@@ -40,7 +40,7 @@
   const stage = $('#stage'), status = $('#model-status'), panel = $('#model-panel');
   const motionReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let api = null, loadPromise;
-  const loadModel = () => loadPromise || (loadPromise = fetch(`assets/house-option${scheme}-tiled.json`)
+  const loadModel = () => loadPromise || (loadPromise = fetch(`assets/house-option${scheme}-tiled.json?v=coord-r2`)
     .then(r => { if (!r.ok) throw new Error('模型文件暂时不可用'); return r.json(); })
     .then(async data => { if (!window.THREE || !window.GLTFLoader) throw new Error('三维引擎未能加载'); const detail=await new window.GLTFLoader().loadAsync(`assets/house-option${scheme}-tiled.glb`); api = createModel(data,detail.scene);const initialView=new URLSearchParams(location.search).get('view');if(['floor1','floor2','roof'].includes(initialView))api.setMode(initialView);return api; })
     .catch(e => {
