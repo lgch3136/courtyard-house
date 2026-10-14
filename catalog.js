@@ -237,7 +237,7 @@ window.GUIYUAN_ROOMS = [
   {
     "id": "tiled-2-floor1",
     "name": "方案2 · 一层剖切",
-    "floor": "旧版",
+    "floor": "历史",
     "code": "R1-2F1",
     "image": "assets/tiled-r1/option2-blender-floor1.jpg",
     "kind": "瓦顶R1历史参考",
@@ -249,7 +249,7 @@ window.GUIYUAN_ROOMS = [
   {
     "id": "tiled-2-floor2",
     "name": "方案2 · 二层剖切",
-    "floor": "旧版",
+    "floor": "历史",
     "code": "R1-2F2",
     "image": "assets/tiled-r1/option2-blender-floor2.jpg",
     "kind": "瓦顶R1历史参考",
@@ -272,7 +272,7 @@ window.GUIYUAN_ROOMS = [
   {
     "id": "tiled-1-floor1",
     "name": "方案1 · 一层剖切",
-    "floor": "旧版",
+    "floor": "历史",
     "code": "R1-1F1",
     "image": "assets/tiled-r1/option1-blender-floor1.jpg",
     "kind": "瓦顶R1历史参考",
@@ -284,7 +284,7 @@ window.GUIYUAN_ROOMS = [
   {
     "id": "tiled-1-floor2",
     "name": "方案1 · 二层剖切",
-    "floor": "旧版",
+    "floor": "历史",
     "code": "R1-1F2",
     "image": "assets/tiled-r1/option1-blender-floor2.jpg",
     "kind": "瓦顶R1历史参考",
