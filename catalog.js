@@ -1,36 +1,262 @@
 window.GUIYUAN_ROOMS = [
   {
+    "id": "r3-楼梯风水动线",
+    "name": "楼梯位置与起步方向",
+    "floor": "方案研究",
+    "code": "R3-ST",
+    "image": "assets/windows-r3/楼梯风水动线.jpg",
+    "kind": "尺寸与布局比选",
+    "detail": "图上方是后院，不是正北。按既定宅向格宫跨北/东北；侧向进入，首跑朝后、折返朝前。文化偏好，非实测吉凶判定。"
+  },
+  {
+    "id": "r3-楼梯比选",
+    "name": "楼梯三方案面积比较",
+    "floor": "方案研究",
+    "code": "R3-ST",
+    "image": "assets/windows-r3/楼梯比选.jpg",
+    "kind": "尺寸与布局比选",
+    "detail": "推荐深化紧凑折返B：外包2.9×5.7m；相对原3.6×5.4m减少约2.91㎡/层。已计中间和楼层平台，未替换主模型。"
+  },
+  {
+    "id": "r3-2-blender-left",
+    "name": "方案2 · 左侧三卫高窗外立面",
+    "floor": "场地",
+    "code": "R3-2",
+    "image": "assets/windows-r3/option2-blender-left.jpg",
+    "kind": "R3 / Blender实际几何",
+    "detail": "左侧三卫各预留900×600高窗，窗台1800；侧院间距、结构、开启与防水待核。楼梯主模型仍为原宽梯，紧凑B见比选图。",
+    "scheme": 2,
+    "mode": "all",
+    "view": "left"
+  },
+  {
+    "id": "r3-2-blender-floor1",
+    "name": "方案2 · 一层三维剖切",
+    "floor": "一层",
+    "code": "R3-2",
+    "image": "assets/windows-r3/option2-blender-floor1.jpg",
+    "kind": "R3 / Blender实际几何",
+    "detail": "左侧三卫各预留900×600高窗，窗台1800；侧院间距、结构、开启与防水待核。楼梯主模型仍为原宽梯，紧凑B见比选图。",
+    "scheme": 2,
+    "mode": "floor1"
+  },
+  {
+    "id": "r3-2-blender-floor2",
+    "name": "方案2 · 二层三维剖切",
+    "floor": "二层",
+    "code": "R3-2",
+    "image": "assets/windows-r3/option2-blender-floor2.jpg",
+    "kind": "R3 / Blender实际几何",
+    "detail": "左侧三卫各预留900×600高窗，窗台1800；侧院间距、结构、开启与防水待核。楼梯主模型仍为原宽梯，紧凑B见比选图。",
+    "scheme": 2,
+    "mode": "floor2"
+  },
+  {
+    "id": "r3-2-bath-ground",
+    "name": "方案2 · 一层公卫高窗",
+    "floor": "一层",
+    "code": "R3-2",
+    "image": "assets/windows-r3/option2-bath-ground.jpg",
+    "kind": "R3 / Blender实际几何",
+    "detail": "左侧三卫各预留900×600高窗，窗台1800；侧院间距、结构、开启与防水待核。楼梯主模型仍为原宽梯，紧凑B见比选图。",
+    "scheme": 2,
+    "mode": "all",
+    "camera": [
+      [
+        2.12,
+        6.22,
+        1.58
+      ],
+      [
+        0.18,
+        4.45,
+        1.8
+      ]
+    ]
+  },
+  {
+    "id": "r3-2-bath-suite",
+    "name": "方案2 · 主卧专卫高窗",
+    "floor": "二层",
+    "code": "R3-2",
+    "image": "assets/windows-r3/option2-bath-suite.jpg",
+    "kind": "R3 / Blender实际几何",
+    "detail": "左侧三卫各预留900×600高窗，窗台1800；侧院间距、结构、开启与防水待核。楼梯主模型仍为原宽梯，紧凑B见比选图。",
+    "scheme": 2,
+    "mode": "all",
+    "camera": [
+      [
+        3.28,
+        4.58,
+        5.18
+      ],
+      [
+        0.18,
+        3.98,
+        5.5
+      ]
+    ]
+  },
+  {
+    "id": "r3-2-bath-public",
+    "name": "方案2 · 二层公卫高窗",
+    "floor": "二层",
+    "code": "R3-2",
+    "image": "assets/windows-r3/option2-bath-public.jpg",
+    "kind": "R3 / Blender实际几何",
+    "detail": "左侧三卫各预留900×600高窗，窗台1800；侧院间距、结构、开启与防水待核。楼梯主模型仍为原宽梯，紧凑B见比选图。",
+    "scheme": 2,
+    "mode": "all",
+    "camera": [
+      [
+        3.28,
+        6.3,
+        5.18
+      ],
+      [
+        0.18,
+        5.65,
+        5.5
+      ]
+    ]
+  },
+  {
+    "id": "r3-1-blender-left",
+    "name": "方案1 · 左侧三卫高窗外立面",
+    "floor": "场地",
+    "code": "R3-1",
+    "image": "assets/windows-r3/option1-blender-left.jpg",
+    "kind": "R3 / Blender实际几何",
+    "detail": "左侧三卫各预留900×600高窗，窗台1800；侧院间距、结构、开启与防水待核。楼梯主模型仍为原宽梯，紧凑B见比选图。",
+    "scheme": 1,
+    "mode": "all",
+    "view": "left"
+  },
+  {
+    "id": "r3-1-blender-floor1",
+    "name": "方案1 · 一层三维剖切",
+    "floor": "一层",
+    "code": "R3-1",
+    "image": "assets/windows-r3/option1-blender-floor1.jpg",
+    "kind": "R3 / Blender实际几何",
+    "detail": "左侧三卫各预留900×600高窗，窗台1800；侧院间距、结构、开启与防水待核。楼梯主模型仍为原宽梯，紧凑B见比选图。",
+    "scheme": 1,
+    "mode": "floor1"
+  },
+  {
+    "id": "r3-1-blender-floor2",
+    "name": "方案1 · 二层三维剖切",
+    "floor": "二层",
+    "code": "R3-1",
+    "image": "assets/windows-r3/option1-blender-floor2.jpg",
+    "kind": "R3 / Blender实际几何",
+    "detail": "左侧三卫各预留900×600高窗，窗台1800；侧院间距、结构、开启与防水待核。楼梯主模型仍为原宽梯，紧凑B见比选图。",
+    "scheme": 1,
+    "mode": "floor2"
+  },
+  {
+    "id": "r3-1-bath-ground",
+    "name": "方案1 · 一层公卫高窗",
+    "floor": "一层",
+    "code": "R3-1",
+    "image": "assets/windows-r3/option1-bath-ground.jpg",
+    "kind": "R3 / Blender实际几何",
+    "detail": "左侧三卫各预留900×600高窗，窗台1800；侧院间距、结构、开启与防水待核。楼梯主模型仍为原宽梯，紧凑B见比选图。",
+    "scheme": 1,
+    "mode": "all",
+    "camera": [
+      [
+        2.55,
+        6.18,
+        1.58
+      ],
+      [
+        0.15,
+        4.9,
+        1.9
+      ]
+    ]
+  },
+  {
+    "id": "r3-1-bath-suite",
+    "name": "方案1 · 主卧专卫高窗",
+    "floor": "二层",
+    "code": "R3-1",
+    "image": "assets/windows-r3/option1-bath-suite.jpg",
+    "kind": "R3 / Blender实际几何",
+    "detail": "左侧三卫各预留900×600高窗，窗台1800；侧院间距、结构、开启与防水待核。楼梯主模型仍为原宽梯，紧凑B见比选图。",
+    "scheme": 1,
+    "mode": "all",
+    "camera": [
+      [
+        3.75,
+        4.8,
+        5.18
+      ],
+      [
+        0.18,
+        4.25,
+        5.5
+      ]
+    ]
+  },
+  {
+    "id": "r3-1-bath-public",
+    "name": "方案1 · 二层公卫高窗",
+    "floor": "二层",
+    "code": "R3-1",
+    "image": "assets/windows-r3/option1-bath-public.jpg",
+    "kind": "R3 / Blender实际几何",
+    "detail": "左侧三卫各预留900×600高窗，窗台1800；侧院间距、结构、开启与防水待核。楼梯主模型仍为原宽梯，紧凑B见比选图。",
+    "scheme": 1,
+    "mode": "all",
+    "camera": [
+      [
+        3.78,
+        6.24,
+        5.18
+      ],
+      [
+        0.18,
+        5.82,
+        5.5
+      ]
+    ]
+  },
+  {
     "id": "tiled-option2",
     "name": "方案2 · 完整瓦顶外观",
     "floor": "场地",
     "code": "R1-02",
     "image": "assets/tiled-r1/option2-imagegen-exterior.jpg",
-    "kind": "本次更新 / ImageGen",
-    "detail": "大中厅约30.6㎡，主卧套房约28.3㎡。两层四卧三卫，完整灰瓦顶，无外圈通道。材质效果以Blender为参照，尺寸见图纸。",
+    "kind": "瓦顶R1历史参考",
+    "detail": "旧版图片，三卫高窗以R3卡片及当前模型为准。大中厅约30.6㎡，主卧套房约28.3㎡。两层四卧三卫，完整灰瓦顶，无外圈通道。材质效果以Blender为参照，尺寸见图纸。",
     "scheme": 2,
     "mode": "all"
   },
   {
     "id": "tiled-2-floor1",
     "name": "方案2 · 一层剖切",
-    "floor": "一层",
+    "floor": "旧版",
     "code": "R1-2F1",
     "image": "assets/tiled-r1/option2-blender-floor1.jpg",
-    "kind": "本次更新 / Blender",
-    "detail": "与当前可编辑模型同源的剖切渲染，可核对门墙和家具。仅保留首层至二层楼梯。",
+    "kind": "瓦顶R1历史参考",
+    "detail": "旧版图片，三卫高窗以R3卡片及当前模型为准。旧版剖切渲染，可核对门墙和家具。仅保留首层至二层楼梯。",
     "scheme": 2,
-    "mode": "floor1"
+    "mode": "floor1",
+    "archived": true
   },
   {
     "id": "tiled-2-floor2",
     "name": "方案2 · 二层剖切",
-    "floor": "二层",
+    "floor": "旧版",
     "code": "R1-2F2",
     "image": "assets/tiled-r1/option2-blender-floor2.jpg",
-    "kind": "本次更新 / Blender",
-    "detail": "与当前可编辑模型同源的剖切渲染，可核对门墙和家具。仅保留首层至二层楼梯。",
+    "kind": "瓦顶R1历史参考",
+    "detail": "旧版图片，三卫高窗以R3卡片及当前模型为准。旧版剖切渲染，可核对门墙和家具。仅保留首层至二层楼梯。",
     "scheme": 2,
-    "mode": "floor2"
+    "mode": "floor2",
+    "archived": true
   },
   {
     "id": "tiled-option1",
@@ -38,32 +264,34 @@ window.GUIYUAN_ROOMS = [
     "floor": "场地",
     "code": "R1-01",
     "image": "assets/tiled-r1/option1-imagegen-exterior.jpg",
-    "kind": "本次更新 / ImageGen",
-    "detail": "中厅约24.0㎡，主卧套房约31.1㎡。两层四卧三卫，完整灰瓦顶，无外圈通道。材质效果以Blender为参照，尺寸见图纸。",
+    "kind": "瓦顶R1历史参考",
+    "detail": "旧版图片，三卫高窗以R3卡片及当前模型为准。中厅约24.0㎡，主卧套房约31.1㎡。两层四卧三卫，完整灰瓦顶，无外圈通道。材质效果以Blender为参照，尺寸见图纸。",
     "scheme": 1,
     "mode": "all"
   },
   {
     "id": "tiled-1-floor1",
     "name": "方案1 · 一层剖切",
-    "floor": "一层",
+    "floor": "旧版",
     "code": "R1-1F1",
     "image": "assets/tiled-r1/option1-blender-floor1.jpg",
-    "kind": "本次更新 / Blender",
-    "detail": "与当前可编辑模型同源的剖切渲染，可核对门墙和家具。仅保留首层至二层楼梯。",
+    "kind": "瓦顶R1历史参考",
+    "detail": "旧版图片，三卫高窗以R3卡片及当前模型为准。旧版剖切渲染，可核对门墙和家具。仅保留首层至二层楼梯。",
     "scheme": 1,
-    "mode": "floor1"
+    "mode": "floor1",
+    "archived": true
   },
   {
     "id": "tiled-1-floor2",
     "name": "方案1 · 二层剖切",
-    "floor": "二层",
+    "floor": "旧版",
     "code": "R1-1F2",
     "image": "assets/tiled-r1/option1-blender-floor2.jpg",
-    "kind": "本次更新 / Blender",
-    "detail": "与当前可编辑模型同源的剖切渲染，可核对门墙和家具。仅保留首层至二层楼梯。",
+    "kind": "瓦顶R1历史参考",
+    "detail": "旧版图片，三卫高窗以R3卡片及当前模型为准。旧版剖切渲染，可核对门墙和家具。仅保留首层至二层楼梯。",
     "scheme": 1,
-    "mode": "floor2"
+    "mode": "floor2",
+    "archived": true
   },
   {
     "id": "tiled-roof",
@@ -71,8 +299,8 @@ window.GUIYUAN_ROOMS = [
     "floor": "屋顶",
     "code": "R1-RF",
     "image": "assets/tiled-r1/option2-blender-roof.jpg",
-    "kind": "两案共用 / Blender",
-    "detail": "12×11米投影内完整盖顶。坡度暂35%，脊顶暂+8.965m；周边600mm为屋顶内部檐沟协调带，不是地面过道。无露台、茶棚和屋顶活动。",
+    "kind": "瓦顶R1历史参考",
+    "detail": "旧版图片，三卫高窗以R3卡片及当前模型为准。12×11米投影内完整盖顶。坡度暂35%，脊顶暂+8.965m；周边600mm为屋顶内部檐沟协调带，不是地面过道。无露台、茶棚和屋顶活动。",
     "mode": "roof"
   },
   {
@@ -81,8 +309,8 @@ window.GUIYUAN_ROOMS = [
     "floor": "二层",
     "code": "R1-ST",
     "image": "assets/tiled-r1/option2-blender-floor2.jpg",
-    "kind": "本次更新 / Blender",
-    "detail": "图示仅保留首层到二层的楼梯及洞口防护。取消原通往露台的上行梯段，屋顶另设专业检修方式。",
+    "kind": "瓦顶R1历史参考",
+    "detail": "旧版图片，三卫高窗以R3卡片及当前模型为准。图示仅保留首层到二层的楼梯及洞口防护。取消原通往露台的上行梯段，屋顶另设专业检修方式。",
     "mode": "floor2",
     "camera": [
       [
@@ -303,8 +531,8 @@ window.GUIYUAN_ROOMS = [
     "floor": "一层",
     "code": "107",
     "image": "assets/interiors/bath-ground.jpg",
-    "kind": "方案1材质参考",
-    "detail": "原室内材质意向；方案2墙位、家具尺度以更新图纸和3D为准。约7.20m²，淋浴分隔，洗衣集中干区。排风需独立深化。",
+    "kind": "旧版卫浴材质参考",
+    "detail": "此图尚无R3高窗，仅用于材质讨论；新增窗口请看R3高窗卡片。",
     "mode": "floor1",
     "camera": [
       [
@@ -439,8 +667,8 @@ window.GUIYUAN_ROOMS = [
     "floor": "二层",
     "code": "204",
     "image": "assets/interiors/bath-suite.jpg",
-    "kind": "方案1材质参考",
-    "detail": "原室内材质意向；方案2墙位、家具尺度以更新图纸和3D为准。约5.38m²；套内通道进入，独立淋浴、坐便和洗漱。",
+    "kind": "旧版卫浴材质参考",
+    "detail": "此图尚无R3高窗，仅用于材质讨论；新增窗口请看R3高窗卡片。",
     "mode": "floor2",
     "camera": [
       [
@@ -563,8 +791,8 @@ window.GUIYUAN_ROOMS = [
     "floor": "二层",
     "code": "208",
     "image": "assets/interiors/bath-public.jpg",
-    "kind": "方案1材质参考",
-    "detail": "原室内材质意向；方案2墙位、家具尺度以更新图纸和3D为准。约5.38m²，仅从公共过厅进入，不穿越主卧套房。",
+    "kind": "旧版卫浴材质参考",
+    "detail": "此图尚无R3高窗，仅用于材质讨论；新增窗口请看R3高窗卡片。",
     "mode": "floor2",
     "camera": [
       [

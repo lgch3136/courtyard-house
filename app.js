@@ -4,9 +4,10 @@
   const $ = s => document.querySelector(s);
   const $$ = s => [...document.querySelectorAll(s)];
   const scheme = new URLSearchParams(location.search).get('scheme') === '1' ? 1 : 2;
+  $$('#room-camera option').forEach(o=>{o.value=o.value.replace(/^r3-[12]-/,`r3-${scheme}-`);});
   const schemeSelect = $('#scheme-select'); schemeSelect.value = String(scheme);
   $('#scheme-label').textContent = scheme === 1 ? '方案1 · 原房间尺度' : '方案2 · 大中厅';
-  schemeSelect.onchange = () => { const u=new URL(location.href);u.searchParams.set('scheme',schemeSelect.value);u.searchParams.delete('view');u.hash='model';location.assign(u.href); };
+  schemeSelect.onchange = () => { const u=new URL(location.href);u.searchParams.set('scheme',schemeSelect.value);u.searchParams.delete('view');u.searchParams.delete('room');u.hash='model';location.assign(u.href); };
   const imageInfo = {
     'tiled-option2': ['方案2 · 大中厅与完整灰瓦顶', 'assets/tiled-r1/option2-imagegen-exterior.jpg'],
     'tiled-option1': ['方案1 · 原房间尺度与完整灰瓦顶', 'assets/tiled-r1/option1-imagegen-exterior.jpg'],
@@ -40,9 +41,9 @@
   const stage = $('#stage'), status = $('#model-status'), panel = $('#model-panel');
   const motionReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let api = null, loadPromise;
-  const loadModel = () => loadPromise || (loadPromise = fetch(`assets/house-option${scheme}-tiled.json?v=coord-r2`)
+  const loadModel = () => loadPromise || (loadPromise = fetch(`assets/house-option${scheme}-tiled.json?v=windows-r3`)
     .then(r => { if (!r.ok) throw new Error('模型文件暂时不可用'); return r.json(); })
-    .then(async data => { if (!window.THREE || !window.GLTFLoader) throw new Error('三维引擎未能加载'); const detail=await new window.GLTFLoader().loadAsync(`assets/house-option${scheme}-tiled.glb`); api = createModel(data,detail.scene);const initialView=new URLSearchParams(location.search).get('view');if(['floor1','floor2','roof'].includes(initialView))api.setMode(initialView);return api; })
+    .then(async data => { if (!window.THREE || !window.GLTFLoader) throw new Error('三维引擎未能加载'); const detail=await new window.GLTFLoader().loadAsync(`assets/house-option${scheme}-tiled.glb?v=windows-r3`); api = createModel(data,detail.scene);const initialView=new URLSearchParams(location.search).get('view');if(['floor1','floor2','roof'].includes(initialView))api.setMode(initialView);const initialRoom=new URLSearchParams(location.search).get('room');const room=window.GUIYUAN_ROOMS.find(r=>r.id===initialRoom);if(room?.camera)api.setRoom(initialRoom);else if(room?.view)api.setView(room.view);return api; })
     .catch(e => {
       const el = $('#model-loading'); el.replaceChildren();
       const msg = document.createElement('div'); msg.className = 'error-fallback';
@@ -57,7 +58,7 @@
     if (entries.some(x => x.isIntersecting)) { loadModel(); observer.disconnect(); }
   }, {rootMargin:'450px'});
   observer.observe(stage);
-  window.openRoom3D = async id => { const r=window.GUIYUAN_ROOMS.find(x=>x.id===id);if(!r)return;if(r.scheme&&r.scheme!==scheme){const u=new URL(location.href);u.searchParams.set('scheme',r.scheme);u.searchParams.set('view',r.mode||'all');u.hash='model';location.assign(u.href);return;} $('#model').scrollIntoView({behavior:motionReduced?'auto':'smooth'});const model=await loadModel();if(r.camera)model?.setRoom(id);else model?.setMode(r.mode||'all'); };
+  window.openRoom3D = async id => { const r=window.GUIYUAN_ROOMS.find(x=>x.id===id);if(!r)return;if(r.scheme&&r.scheme!==scheme){const u=new URL(location.href);u.searchParams.set('scheme',r.scheme);u.searchParams.set('view',r.mode||'all');u.searchParams.set('room',id);u.hash='model';location.assign(u.href);return;} $('#model').scrollIntoView({behavior:motionReduced?'auto':'smooth'});const model=await loadModel();if(r.camera)model?.setRoom(id);else {model?.setMode(r.mode||'all');if(r.view)model?.setView(r.view);} };
   $$('[data-jump]').forEach(b => b.onclick = async () => {
     $('#model').scrollIntoView({behavior:motionReduced ? 'auto' : 'smooth'});
     const model = await loadModel(); model?.setMode(b.dataset.jump);
@@ -195,7 +196,7 @@
     function setMode(key){inside=null;$('#room-camera').value='';mode=key;view='perspective';autoRotate=false;$('#rotate-toggle').setAttribute('aria-pressed','false');rebuild();preset();}
     function setView(key){inside=null;$('#room-camera').value='';dimGroup.visible=dimensions;view=key;autoRotate=false;$('#rotate-toggle').setAttribute('aria-pressed','false');preset();}
     function setRoom(id){const r=window.GUIYUAN_ROOMS.find(r=>r.id===id&&r.camera);if(!r)return;setMode('all');inside=r;$('#room-camera').value=id;const points=(scheme===2&&r.camera2)||r.camera;const a=points[0],b=points[1],p=new T.Vector3(a[0]-6,a[2],a[1]-5.5),t=new T.Vector3(b[0]-6,b[2],b[1]-5.5),d=p.clone().sub(t);aim.target.copy(t);aim.dist=d.length();aim.az=Math.atan2(d.x,d.z);aim.el=Math.asin(d.y/aim.dist);az=aim.az;el=aim.el;dist=aim.dist;target.copy(t);camera.fov=70;camera.updateProjectionMatrix();dimGroup.visible=false;labels.forEach(l=>l.el.hidden=true);dirty=true;updateUI();render();}
-    $('#room-camera').onchange=e=>{if(e.target.value)setRoom(e.target.value);};$('#exit-room').onclick=()=>setMode('all');
+    $('#room-camera').onchange=e=>{if(e.target.value){const id=e.target.value.replace(/^r3-[12]-/,`r3-${scheme}-`);setRoom(id);}};$('#exit-room').onclick=()=>setMode('all');
     function updateLabels(){
       const w=stage.clientWidth,h=stage.clientHeight;
       for(const l of labels){
