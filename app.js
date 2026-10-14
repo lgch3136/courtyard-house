@@ -1,18 +1,22 @@
-/* Client presentation. V7 geometry is in metres and includes the private master suite. */
+/* Client presentation. Two tiled-roof schemes, metric geometry and a private master suite. */
 (() => {
   'use strict';
   const $ = s => document.querySelector(s);
   const $$ = s => [...document.querySelectorAll(s)];
+  const scheme = new URLSearchParams(location.search).get('scheme') === '1' ? 1 : 2;
+  const schemeSelect = $('#scheme-select'); schemeSelect.value = String(scheme);
+  $('#scheme-label').textContent = scheme === 1 ? '方案1 · 原房间尺度' : '方案2 · 大中厅';
+  schemeSelect.onchange = () => { const u=new URL(location.href);u.searchParams.set('scheme',schemeSelect.value);u.searchParams.delete('view');u.hash='model';location.assign(u.href); };
   const imageInfo = {
-    'hero-day': ['日景 · 简约乡居', 'assets/hero-day.jpg'],
-    'hero-dusk': ['暮色 · 归家的灯光', 'assets/hero-dusk.jpg'],
-    'roof-tea': ['屋顶 · 茶叙与开敞活动', 'assets/roof-tea.jpg']
+    'tiled-option2': ['方案2 · 大中厅与完整灰瓦顶', 'assets/tiled-r1/option2-imagegen-exterior.jpg'],
+    'tiled-option1': ['方案1 · 原房间尺度与完整灰瓦顶', 'assets/tiled-r1/option1-imagegen-exterior.jpg'],
+    'tiled-roof': ['完整四坡瓦屋顶 · 非上人屋面', 'assets/tiled-r1/option2-blender-roof.jpg']
   };
-  let currentHero = 'hero-day', lastImageButton;
+  let currentHero = 'tiled-option2', lastImageButton;
   $$('[data-hero]').forEach(b => b.addEventListener('click', () => {
-    currentHero = b.dataset.hero === 'dusk' ? 'hero-dusk' : 'hero-day';
+    currentHero = b.dataset.hero === 'dusk' ? 'tiled-option1' : 'tiled-option2';
     $('#hero-image').src = imageInfo[currentHero][1];
-    $('#hero-image').alt = imageInfo[currentHero][0] + '，前院与主体等宽，两侧不设置环绕通道';
+    $('#hero-image').alt = imageInfo[currentHero][0] + '，屋檐投影在12×11米范围内，不增加外圈过道';
     $('.hero-figure .image-open').dataset.image = currentHero;
     $('.hero-figure .image-open').setAttribute('aria-label', '放大查看' + imageInfo[currentHero][0]);
     $$('[data-hero]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
@@ -23,8 +27,8 @@
     $('#lightbox-title').textContent = info[0];
     $('#lightbox-image').src = info[1];
     $('#lightbox-image').alt = info[0];
-    $('#download-image').href = info[1].replace('.jpg','.png');
-    $('#download-image').download = b.dataset.image + '.png';
+    $('#download-image').href = info[1].includes('imagegen') ? info[1].replace('.jpg','.png') : info[1];
+    $('#download-image').download = b.dataset.image + (info[1].includes('imagegen') ? '.png' : '.jpg');
     lastImageButton = b;
     dialog.showModal();
     document.body.style.overflow = 'hidden';
@@ -36,9 +40,9 @@
   const stage = $('#stage'), status = $('#model-status'), panel = $('#model-panel');
   const motionReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let api = null, loadPromise;
-  const loadModel = () => loadPromise || (loadPromise = fetch('assets/house-model.json')
+  const loadModel = () => loadPromise || (loadPromise = fetch(`assets/house-option${scheme}-tiled.json`)
     .then(r => { if (!r.ok) throw new Error('模型文件暂时不可用'); return r.json(); })
-    .then(async data => { if (!window.THREE || !window.GLTFLoader) throw new Error('三维引擎未能加载'); const detail=await new window.GLTFLoader().loadAsync('assets/house-v7.glb'); api = createModel(data,detail.scene); return api; })
+    .then(async data => { if (!window.THREE || !window.GLTFLoader) throw new Error('三维引擎未能加载'); const detail=await new window.GLTFLoader().loadAsync(`assets/house-option${scheme}-tiled.glb`); api = createModel(data,detail.scene);const initialView=new URLSearchParams(location.search).get('view');if(['floor1','floor2','roof'].includes(initialView))api.setMode(initialView);return api; })
     .catch(e => {
       const el = $('#model-loading'); el.replaceChildren();
       const msg = document.createElement('div'); msg.className = 'error-fallback';
@@ -53,7 +57,7 @@
     if (entries.some(x => x.isIntersecting)) { loadModel(); observer.disconnect(); }
   }, {rootMargin:'450px'});
   observer.observe(stage);
-  window.openRoom3D = async id => { $('#model').scrollIntoView({behavior:motionReduced?'auto':'smooth'}); const model=await loadModel();model?.setRoom(id); };
+  window.openRoom3D = async id => { const r=window.GUIYUAN_ROOMS.find(x=>x.id===id);if(!r)return;if(r.scheme&&r.scheme!==scheme){const u=new URL(location.href);u.searchParams.set('scheme',r.scheme);u.searchParams.set('view',r.mode||'all');u.hash='model';location.assign(u.href);return;} $('#model').scrollIntoView({behavior:motionReduced?'auto':'smooth'});const model=await loadModel();if(r.camera)model?.setRoom(id);else model?.setMode(r.mode||'all'); };
   $$('[data-jump]').forEach(b => b.onclick = async () => {
     $('#model').scrollIntoView({behavior:motionReduced ? 'auto' : 'smooth'});
     const model = await loadModel(); model?.setMode(b.dataset.jump);
@@ -118,7 +122,7 @@
     let az=.60,el=.50,dist=31,target=new T.Vector3(0,4.3,0),aim={az:.60,el:.50,dist:31,target:new T.Vector3(0,4.3,0)};
     let labels=[],dirty=true,inView=true,previousTime=0;
     const selectedViews={perspective:[.60,.50,31,'前侧鸟瞰'],front:[0,.095,29,'正面'],left:[-Math.PI/2,.13,29,'左侧'],rear:[Math.PI,.13,29,'背面'],right:[Math.PI/2,.13,29,'右侧'],top:[0,Math.PI/2-.001,30,'俯视']};
-    const modes={all:['两层主体 · 四卧三卫 · 主卧套房',4.25],floor1:['长者／客卧 · 团聚厅 · 厨餐 · 公卫洗衣',.55],floor2:['主卧套房 · 两间客卧 · 公卫 · 家庭起居',4.05],roof:['喝茶观景 · 开敞活动 · 少量洗晒',7.35]};
+    const modes={all:['两层主体 · 四卧三卫 · 主卧套房',4.25],floor1:['长者／客卧 · 团聚厅 · 厨餐 · 公卫洗衣',.55],floor2:['主卧套房 · 两间客卧 · 公卫 · 家庭起居',4.05],roof:['完整四坡瓦屋顶 · 坡度35%暂定 · 非上人',7.7]};
     const lineMaterial = new T.LineBasicMaterial({color:'#78966b',transparent:true,opacity:.85,depthTest:false});
     function line(points) {const g=new T.BufferGeometry().setFromPoints(points.map(p=>new T.Vector3(...p)));const l=new T.Line(g,lineMaterial);l.renderOrder=8;dimGroup.add(l);}
     function addLabel(text,x,y,z,kind='') {const el=document.createElement('span');el.className='hotspot '+kind;el.textContent=text;$('#hotspots').append(el);labels.push({el,p:new T.Vector3(x,y,z),kind});}
@@ -161,12 +165,10 @@
       }
       if(mode==='floor1'||mode==='floor2'){
         const level=mode==='floor1'?1:2;
-        const allow=level===1?['厨房','餐厅','楼梯','卫浴','茶叙过厅','长者/客卧','团聚厅/玄关']:['套房书桌区','主卧套房','衣帽间','主卧专卫','二层公卫','客卧A','客卧B','家庭起居'];
-        for(const[name,x,y,w,d]of HOUSE.rooms[String(level)])if(allow.includes(name))addLabel(name,x+w/2-6,level===1?1.35:4.95,y+d/2-5.5);
+        for(const[name,x,y,w,d]of HOUSE.rooms[String(level)])if(!/走道|门廊|阳台|楼梯前厅/.test(name))addLabel(name,x+w/2-6,level===1?1.35:4.95,y+d/2-5.5);
       }
       if(mode==='roof'){
-        addLabel('茶叙遮阴区',-3.2,7.1,2.1);addLabel('开敞活动区',2.5,7.0,2.1);
-        addLabel('少量洗晒',.2,7.2,-3.8);addLabel('楼梯出口',4.2,9.85,-2.8);
+        addLabel('脊顶暂 +8.965m',0,9.15,0);addLabel('瓦面坡度 35%',0,8.1,3.0);addLabel('周边内收檐沟',4.7,7.5,5.0);
       }
       ground.visible=mode==='all';
       dimensionsFor(mode==='floor2'?3.6:mode==='roof'?6.9:0);
@@ -178,7 +180,7 @@
       $$('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===view)));
       $('#model-view-name').textContent=inside?'室内 · '+inside.name:({all:'整栋',floor1:'一层',floor2:'二层',roof:'屋顶'}[mode])+' · '+selectedViews[view][3];
       $('#mode-description').textContent=inside?'Blender 家具与材质 · 拖动环视':modes[mode][0];
-      status.textContent=$('#model-view-name').textContent;
+      status.textContent='方案'+scheme+' · '+$('#model-view-name').textContent;
     }
     function preset(instant=false){
       camera.fov=inside?70:36;camera.updateProjectionMatrix();
@@ -192,7 +194,7 @@
     }
     function setMode(key){inside=null;$('#room-camera').value='';mode=key;view='perspective';autoRotate=false;$('#rotate-toggle').setAttribute('aria-pressed','false');rebuild();preset();}
     function setView(key){inside=null;$('#room-camera').value='';dimGroup.visible=dimensions;view=key;autoRotate=false;$('#rotate-toggle').setAttribute('aria-pressed','false');preset();}
-    function setRoom(id){const r=window.GUIYUAN_ROOMS.find(r=>r.id===id&&r.camera);if(!r)return;setMode('all');inside=r;$('#room-camera').value=id;const a=r.camera[0],b=r.camera[1],p=new T.Vector3(a[0]-6,a[2],a[1]-5.5),t=new T.Vector3(b[0]-6,b[2],b[1]-5.5),d=p.clone().sub(t);aim.target.copy(t);aim.dist=d.length();aim.az=Math.atan2(d.x,d.z);aim.el=Math.asin(d.y/aim.dist);az=aim.az;el=aim.el;dist=aim.dist;target.copy(t);camera.fov=70;camera.updateProjectionMatrix();dimGroup.visible=false;labels.forEach(l=>l.el.hidden=true);dirty=true;updateUI();render();}
+    function setRoom(id){const r=window.GUIYUAN_ROOMS.find(r=>r.id===id&&r.camera);if(!r)return;setMode('all');inside=r;$('#room-camera').value=id;const points=(scheme===2&&r.camera2)||r.camera;const a=points[0],b=points[1],p=new T.Vector3(a[0]-6,a[2],a[1]-5.5),t=new T.Vector3(b[0]-6,b[2],b[1]-5.5),d=p.clone().sub(t);aim.target.copy(t);aim.dist=d.length();aim.az=Math.atan2(d.x,d.z);aim.el=Math.asin(d.y/aim.dist);az=aim.az;el=aim.el;dist=aim.dist;target.copy(t);camera.fov=70;camera.updateProjectionMatrix();dimGroup.visible=false;labels.forEach(l=>l.el.hidden=true);dirty=true;updateUI();render();}
     $('#room-camera').onchange=e=>{if(e.target.value)setRoom(e.target.value);};$('#exit-room').onclick=()=>setMode('all');
     function updateLabels(){
       const w=stage.clientWidth,h=stage.clientHeight;
